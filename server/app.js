@@ -97,4 +97,20 @@ app.put('/', passport.authenticate('jwt', {session: false}), async (req, res) =>
   }
 })
 
-app.listen(3000, () => console.log('server running on port 3000'))
+app.get('/removeCookie', (req, res) => {
+  res.clearCookie('jwt')
+  res.json({
+    msg: 'logged out successfully'
+  })
+})
+
+app.get('/auth/google', notLoggedIn, passport.authenticate('google', { scope: [ 'email', 'profile' ] }));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login', session: false}), (req, res) => {
+  const user = req.user;
+  const token = jwt.sign({user: user._id}, process.env.secret_key)
+  res.cookie('jwt', token)
+  res.redirect('/')
+})
+
+app.listen(8080, () => console.log('server running on port 8080'))
