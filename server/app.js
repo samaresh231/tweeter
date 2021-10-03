@@ -10,11 +10,13 @@ const passport = require('passport')
 require('./mongodb_config')
 require('./passport_config')
 const User = require('./models/user')
+const cors = require('cors')
 
 const {
   notLoggedIn
 } = require('./middlewares/authentication')
 
+app.use(cors({origin: true, credentials: true}))
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(passport.initialize())

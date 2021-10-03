@@ -19,7 +19,6 @@ googleOpts = {
   clientID: process.env.clientID,
   clientSecret: process.env.clientSecret,
   callbackURL: "http://localhost:8080/auth/google/callback",
-  // passReqToCallback: true
 }
 
 passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
