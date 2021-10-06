@@ -20,8 +20,15 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   photo: {
-    type: String,
-  }
+    url: {
+      type: String,
+      unique: true,
+    },
+    filename: {
+      type: String,
+      unique: true,
+    }
+  },
 })
 
 module.exports = mongoose.model('User', userSchema)

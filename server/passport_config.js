@@ -23,7 +23,7 @@ googleOpts = {
 
 passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
   try {
-    const user = await User.findById(jwt_payload.user).lean()
+    const user = await User.findById(jwt_payload.user, {password: 0, __v: 0}).lean()
     if(!user) {
       return done(null, false)
     } else {
@@ -37,7 +37,7 @@ passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
 passport.use(new GoogleStrategy(googleOpts, async (request, accessToken, refreshToken, profile, done) => {
   try {
     const email = profile._json.email
-    let user = await User.findOne({email})
+    let user = await User.findOne({email}, {password: 0, __v: 0})
 
     if(!user) {
       user = await User.create({

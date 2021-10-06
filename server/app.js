@@ -5,8 +5,9 @@ const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-// const cloudinary = require('./cloudinary_config')
 const passport = require('passport')
+const upload = require('./multer_config')
+const cloudinary = require('./cloudinary_config')
 require('./mongodb_config')
 require('./passport_config')
 const User = require('./models/user')
@@ -19,6 +20,7 @@ const {
 app.use(cors({origin: true, credentials: true}))
 app.use(morgan('dev'))
 app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 app.use(passport.initialize())
 app.use(cookieParser())
 
@@ -30,7 +32,8 @@ app.post('/signup', notLoggedIn, async (req, res) => {
     const user = await User.create({
       name, email, password: hash
     })
-    res.json(user)
+    console.log(user)
+    res.status(201).json(user)
 
   } catch(err) {
     console.log(err)
@@ -74,9 +77,7 @@ app.delete('/logout', passport.authenticate('jwt', {session: false}), (req, res)
 })
 
 app.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.json({
-    msg: 'hi'
-  })
+  res.status(200).json(req.user)
 })
 
 app.put('/', passport.authenticate('jwt', {session: false}), async (req, res) => {
@@ -99,6 +100,49 @@ app.put('/', passport.authenticate('jwt', {session: false}), async (req, res) =>
   }
 })
 
+app.put('/photo', passport.authenticate('jwt', {session: false}), upload.single('image'), async (req, res) => {
+  const photo = req.user.photo
+  try {
+    if(photo && Object.keys(photo).length > 0) {
+      const {filename} = req.user.photo
+      await cloudinary.uploader.destroy(filename)
+    }
+    
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      photo: {
+        url: req.file.path,
+        filename: req.file.filename
+      }
+    }, {
+      new: true
+    })
+    res.status(201).json(user.photo)
+  } catch(err) {
+    res.json(err)
+  }
+})
+
+app.delete('/photo', passport.authenticate('jwt', {session: false}), async (req, res) => {
+  const photo = req.user.photo
+  if(!photo || Object.keys(photo).length === 0) {
+    return res.status(400).json({
+      msg: "profile photo is not uploaded"
+    })
+  }
+
+  try {
+    await cloudinary.uploader.destroy(req.user.photo.filename)
+    const user = await User.findByIdAndUpdate(req.user._id, {photo: {}}, {new: true})
+    console.log(user)
+    res.json({
+      msg: 'profile picture removed'
+    })
+  } catch(err) {
+    console.log(err)
+    res.json(err)
+  }
+})
+
 app.get('/removeCookie', (req, res) => {
   res.clearCookie('jwt')
   res.json({
@@ -112,7 +156,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
   const user = req.user;
   const token = jwt.sign({user: user._id}, process.env.secret_key)
   res.cookie('jwt', token)
-  res.redirect('/')
+  res.redirect('http://localhost:3000/')
 })
 
 app.listen(8080, () => console.log('server running on port 8080'))

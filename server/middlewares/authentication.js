@@ -10,7 +10,9 @@ async function notLoggedIn (req, res, next) {
         const user = await User.findById(payload.user, {password: 0}).lean()
         if(user) {
           req.user = user
-          return res.status(302).redirect('/')
+          return res.status(400).json({
+            msg: "already logged in"
+          })
         }
       }
     } catch(err) {
