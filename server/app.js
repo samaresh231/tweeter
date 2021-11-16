@@ -71,7 +71,7 @@ app.post('/login', notLoggedIn, async (req, res) => {
 
 app.delete('/logout', passport.authenticate('jwt', {session: false}), (req, res) => {
   res.clearCookie('jwt')
-  res.json({
+  res.status(200).json({
     msg: 'logged out successfully'
   })
 })
