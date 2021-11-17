@@ -18,7 +18,7 @@ function Edit() {
     async function main() {
       try {
         setLoading(true)
-        const response = await axios.get('http://localhost:8080/', {
+        const response = await axios.get('http://localhost:8080/settings/', {
           withCredentials: true
         })
 
@@ -44,7 +44,7 @@ function Edit() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.put('http://localhost:8080/', {name, bio, phone, email}, {
+      const response = await axios.put('http://localhost:8080/settings/', {name, bio, phone, email}, {
         withCredentials: true
       })
 
@@ -64,7 +64,7 @@ function Edit() {
     
     try {
       console.log('hi')
-      const response = await axios.put('http://localhost:8080/photo', formData, {
+      const response = await axios.put('http://localhost:8080/settings/photo', formData, {
         withCredentials: true
       })
       setImage(response.data.url)

@@ -12,7 +12,7 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post('http://localhost:8080/signup', {
+      const response = await axios.post('http://localhost:8080/auth/signup', {
         name, email, password
       }, {
         withCredentials: true

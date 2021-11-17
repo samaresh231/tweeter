@@ -11,7 +11,7 @@ function NavBar() {
   useEffect(() => {
     async function main() {
       try {
-        const response = await axios.get('http://localhost:8080/', {
+        const response = await axios.get('http://localhost:8080/settings', {
           withCredentials: true,
         })
 

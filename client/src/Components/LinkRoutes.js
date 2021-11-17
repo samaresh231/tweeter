@@ -5,7 +5,7 @@ function LinkRoutes() {
   const history = useHistory()
   const handleClick = async () => {
     try {
-      const response = await axios.delete('http://localhost:8080/logout', {
+      const response = await axios.delete('http://localhost:8080/auth/logout', {
         withCredentials: true
       })
       if(response.status === 200) {
