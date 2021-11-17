@@ -4,7 +4,7 @@ const app = express()
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const passport = require('passport')
-require('./mongodb_config')
+require('./config/mongodb_config')
 require('./passport_config')
 const cors = require('cors')
 

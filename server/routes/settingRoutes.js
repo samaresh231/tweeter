@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const SettingsController = require('../controllers/settingsController')
-const upload = require('../multer_config')
+const upload = require('../config/multer_config')
 const passport = require('passport')
 
 router.use(passport.authenticate('jwt', {session: false}))

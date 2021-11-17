@@ -1,5 +1,5 @@
 const User = require('../models/user')
-const cloudinary = require('../cloudinary_config')
+const cloudinary = require('../config/cloudinary_config')
 
 const getProfile = (req, res) => {
   res.status(200).json(req.user)
