@@ -10,29 +10,42 @@ const tweetSchema = new mongoose.Schema({
     type: String,
   },
   image: {
-    type: String,
+    url: {
+      type: String,
+      unique: true,
+    },
+    filename: {
+      type: String,
+      unique: true,
+    }
   },
 
   //  E => everyone
   //  F => followers only
   visibility: {
     type: String,
-    enum: ['E', 'F']
+    required: true,
+    enum: ['E', 'F'],
+    default: 'E'
   },
   likes: {
     type: Number,
+    required: true,
     default: 0,
   },
   comments: {
     type: Number,
+    required: true,
     default: 0,
   },
   retweets: {
     type: Number,
-    default: 0
+    required: true,
+    default: 0,
   },
   saved: {
     type: Number,
+    required: true,
     default: 0,
   }
 }, {
