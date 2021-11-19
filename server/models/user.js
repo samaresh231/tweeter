@@ -22,11 +22,9 @@ const userSchema = new mongoose.Schema({
   photo: {
     url: {
       type: String,
-      unique: true,
     },
     filename: {
       type: String,
-      unique: true,
     }
   },
 })
