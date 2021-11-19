@@ -27,4 +27,10 @@ router.get(
   AuthenticationController.googleCallback
 )
 
+// for dev use only
+router.get(
+  '/removeCookie',
+  AuthenticationController.removeCookie
+)
+
 module.exports = router

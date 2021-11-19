@@ -62,9 +62,18 @@ const googleCallback = async (req, res) => {
   res.redirect('http://localhost:3000/')
 }
 
+//  for dev use only
+const removeCookie = async (req, res) => {
+  res.clearCookie('jwt')
+  res.json({
+    msg: 'logged out successfully'
+  })
+}
+
 module.exports = {
   signUp,
   login,
   logout,
-  googleCallback
+  googleCallback,
+  removeCookie
 }
