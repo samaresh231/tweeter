@@ -6,6 +6,8 @@ const TweetController = require('../controllers/tweetController')
 router.use(passport.authenticate('jwt', {session: false}))
 
 router.post('/create-tweet', upload.single('image'), TweetController.createTweet)
-router.delete('/delete-tweet/:id', TweetController.deleteTweet)
+router.delete('/delete-tweet/:tweetId', TweetController.deleteTweet)
+router.post('/retweet', TweetController.reTweet)
+router.delete('/delete-retweet/:tweetId', TweetController.deleteRetweet)
 
 module.exports = router
