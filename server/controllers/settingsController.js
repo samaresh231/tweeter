@@ -15,6 +15,18 @@ const updateProfile = async (req, res) => {
   })
 
   try {
+    if(req.file) {
+      if(req.user.photo) {
+        const {filename} = req.user.photo
+        await cloudinary.uploader.destroy(filename)
+      }
+
+      data.photo = {
+        url: req.file.path,
+        filename: req.file.filename
+      }
+    }
+
     const user = await User.findByIdAndUpdate(req.user._id, data, {new: true})
     res.status(201).json(user)
   } catch(err) {
@@ -25,28 +37,8 @@ const updateProfile = async (req, res) => {
   }
 }
 
-const updateProfilePic = async (req, res) => {
-  const photo = req.user.photo
-  try {
-    if(photo && Object.keys(photo).length > 0) {
-      const {filename} = req.user.photo
-      await cloudinary.uploader.destroy(filename)
-    }
-    
-    const user = await User.findByIdAndUpdate(req.user._id, {
-      photo: {
-        url: req.file.path,
-        filename: req.file.filename
-      }
-    }, {
-      new: true
-    })
-    res.status(201).json(user.photo)
-  } catch(err) {
-    res.json(err)
-  }
-}
 
+// for dev use only
 const deleteProfilePic = async (req, res) => {
   const photo = req.user.photo
   if(!photo || Object.keys(photo).length === 0) {
@@ -71,6 +63,5 @@ const deleteProfilePic = async (req, res) => {
 module.exports = {
   getProfile,
   updateProfile,
-  updateProfilePic,
   deleteProfilePic
 }
