@@ -1,5 +1,6 @@
 const Tweet = require('../models/tweet')
 const Retweet = require('../models/retweet')
+const Like = require('../models/like')
 const cloudinary = require('../config/cloudinary_config')
 
 
@@ -66,6 +67,9 @@ const deleteTweet = async (req, res) => {
     // deleting all retweets of the deleted tweet
     await Retweet.deleteMany({tweet: tweetId})
 
+    // deleting all likes of the deleted tweet
+    await Like.deleteMany({tweet: tweetId})
+
     res.status(200).json({
       msg: 'Tweet deleted successfully'
     })
@@ -102,8 +106,6 @@ const reTweet = async (req, res) => {
     // updating retweet count
     await Tweet.findByIdAndUpdate(tweetId, {
       $inc: {retweets: 1}
-    }, {
-      new: true
     })
 
     const response = await Retweet.create({
@@ -135,10 +137,8 @@ const deleteRetweet = async (req, res) => {
     }
     
     // decrementing retweet count by 1
-    const updatedTweet = await Tweet.findByIdAndUpdate(tweetId, {
+    await Tweet.findByIdAndUpdate(tweetId, {
       $inc: {retweets: -1}
-    }, {
-      new: true
     })
 
     res.status(200).json({
@@ -153,9 +153,81 @@ const deleteRetweet = async (req, res) => {
   }
 }
 
+const likeTweet = async (req, res) => {
+  const {tweetId} = req.body
+
+  try {
+    const isLikeExists = await Like.exists({tweet: tweetId, user: req.user._id})
+
+    //  checking if the user already liked the tweet
+    if(isLikeExists) {
+      return res.status(400).json({
+        error: 'user already liked the tweet'
+      })
+    }
+
+    const response = await Like.create({
+      tweet: tweetId,
+      user: req.user._id
+    })
+
+    // updating number of tweet likes by 1
+    await Tweet.findByIdAndUpdate(tweetId, {
+      $inc: {likes: 1}
+    })
+
+    res.status(201).json(response)   
+  } catch(err) {
+    console.log(err)
+    res.json({
+      error: err.message
+    })
+  }
+}
+
+const removeLike = async (req, res) => {
+  const {tweetId} = req.params
+  
+  try {
+    const response = await Like.deleteOne({tweet: tweetId, user: req.user._id})
+
+    if(response.deletedCount === 0) {
+      return res.json({
+        error: 'Access Denied'
+      })
+    }
+
+    //  decreasing number of tweet likes by 1
+    await Tweet.findByIdAndUpdate(tweetId, {
+      $inc: {likes: -1}
+    })
+
+    res.status(200).json({
+      msg: `successfully removed like for tweet id: ${tweetId}`
+    })
+  } catch(err) {
+    console.log(err)
+    res.json({
+      error: err.message
+    })
+  }
+}
+
+const bookmarkTweet = async (req, res) => {
+  //  Todo
+}
+
+const removeBookmark = async (req, res) => {
+  //  Todo
+}
+
 module.exports = {
   createTweet,
   deleteTweet,
   reTweet,
-  deleteRetweet
+  deleteRetweet,
+  likeTweet,
+  removeLike,
+  bookmarkTweet,
+  removeBookmark
 }
