@@ -9,7 +9,8 @@ function Edit() {
   const [bio, setBio] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
-  const [image, setImage] = useState('https://res.cloudinary.com/do8wqn9b9/image/upload/v1633538448/profile/rkke1ozjdth82x7wtrs7.jpg')
+  const [image, setImage] = useState(null)
+  const [imageUrl, setImageUrl] = useState('https://res.cloudinary.com/do8wqn9b9/image/upload/v1633538448/profile/rkke1ozjdth82x7wtrs7.jpg')
   const [loading, setLoading] = useState(false)
 
   const history = useHistory()
@@ -29,7 +30,7 @@ function Edit() {
         setEmail(profile.email)
         setPhone(profile.phone)
         if(profile.photo && profile.photo.url) {
-          setImage(profile.photo.url)
+          setImageUrl(profile.photo.url)
         }
       } catch(err) {
         console.log(err)
@@ -60,14 +61,12 @@ function Edit() {
     const file = e.target.files[0]
     const formData = new FormData();
     formData.append('image', file)
-    formData.append('name', 'Samaresh')
     
     try {
-      console.log('hi')
       const response = await axios.put('http://localhost:8080/settings/photo', formData, {
         withCredentials: true
       })
-      setImage(response.data.url)
+      setImageUrl(response.data.url)
     } catch(err) {
       console.log(err)
     }
@@ -82,7 +81,7 @@ function Edit() {
         <SupressedText>Changes will be reflected to every service</SupressedText>
         <form onSubmit={handleSubmit}>
           <Label htmlFor='photo' style={{display: 'flex', alignItems: 'center'}}>
-            <ProfileImg src={image} />
+            <ProfileImg src={imageUrl} />
             <ChangePhotoText style={{margin: '5%'}}>Change photo</ChangePhotoText>
           </Label>
           <input type='file' id='photo' onChange={handleImageSubmit} style={{display: 'none'}}/>

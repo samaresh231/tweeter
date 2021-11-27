@@ -6,6 +6,7 @@ import Edit from './Components/Edit'
 import Signup from './Components/Signup'
 import ProtectedRoute from './Components/ProtectedRoute'
 import NotProtectedRoute from './Components/NotProtectedRoute'
+import Rough from './Components/Rough'
 import {AppContainer} from './Style/app.style'
 import {Route, Switch} from 'react-router-dom'
 import NavBar from './Components/NavBar'
@@ -34,6 +35,9 @@ function App() {
           </Route>
           <Route path='/edit'>
             <ProtectedRoute Component={Edit} />
+          </Route>
+          <Route path='/rough'>
+            <Rough />
           </Route>
           <Route path="*">
             <div style={{textAlign: 'center'}}>

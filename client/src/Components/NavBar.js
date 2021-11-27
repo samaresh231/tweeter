@@ -17,8 +17,15 @@ function NavBar() {
 
         const data = response.data
         const photo = data.photo
-        const name = data.name.slice(0, data.name.indexOf(' '))
-        setName(name)
+        const index = data.name.indexOf(' ')
+        
+        if(index === -1) {
+          setName(data.name)
+        } else {
+          const name = data.name.slice(0, data.name.indexOf(' '))
+          setName(name)
+        }
+
         if(photo.url) {
           setUrl(photo.url)
         }
@@ -42,7 +49,7 @@ function NavBar() {
         <Img src={url}/>
         <span>{name} {isTrue ? <i className="fas fa-caret-down"></i> : <i className="fas fa-caret-up"></i>} </span>
       </Span>
-      <NavDropDown hide={isTrue} clicked={handleClick} />
+      <NavDropDown hide={isTrue} onClick={handleClick} />
     </NavDiv>
   )
 }
