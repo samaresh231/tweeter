@@ -19,7 +19,7 @@ const commentSchema = new mongoose.Schema({
       unique: true,
     }
   },
-  commentedBy: {
+  user: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
     required: true,

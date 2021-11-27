@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
 
 const likeSchema = new mongoose.Schema({
-  likedBy: {
+  user: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
     required: true,
   },
-  content: {
+  tweet: {
     type: mongoose.Types.ObjectId,
     required: true,
   },
