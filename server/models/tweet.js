@@ -12,21 +12,19 @@ const tweetSchema = new mongoose.Schema({
   image: {
     url: {
       type: String,
-      unique: true,
     },
     filename: {
       type: String,
-      unique: true,
     }
   },
 
-  //  E => everyone
-  //  F => followers only
+  //  Everyone => everyone can see the post
+  //  Follower => only followers can see the post
   visibility: {
     type: String,
     required: true,
-    enum: ['E', 'F'],
-    default: 'E'
+    enum: ['Everyone', 'Follower'],
+    default: 'Everyone'
   },
   likes: {
     type: Number,

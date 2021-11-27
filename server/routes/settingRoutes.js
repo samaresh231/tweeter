@@ -7,9 +7,7 @@ router.use(passport.authenticate('jwt', {session: false}))
 
 router.get('/', SettingsController.getProfile)
 
-router.put('/', SettingsController.updateProfile)
-
-router.put('/photo', upload.single('image'), SettingsController.updateProfilePic)
+router.put('/', upload.single('image'), SettingsController.updateProfile)
 
 router.delete('/photo', SettingsController.deleteProfilePic)
 
