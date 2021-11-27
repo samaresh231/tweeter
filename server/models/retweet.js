@@ -11,6 +11,8 @@ const retweetSchema = new mongoose.Schema({
     ref: 'Tweet',
     required: true,
   }
+}, {
+  timestamps: true
 })
 
 module.exports = mongoose.model('Retweet', retweetSchema)

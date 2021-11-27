@@ -11,6 +11,8 @@ const savedSchema = new mongoose.Schema({
     ref: 'Tweet',
     required: true,
   }
+}, {
+  timestamps: true
 })
 
 module.exports = mongoose.model('Saved', savedSchema)
