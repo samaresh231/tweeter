@@ -62,13 +62,16 @@ const deleteTweet = async (req, res) => {
       await cloudinary.uploader.destroy(filename)
     }
 
-    await Tweet.deleteOne({_id: tweetId})
+    // deleting tweet 
+    await Tweet.deleteOne({_id: tweetId}),
 
-    // deleting all retweets of the deleted tweet
-    await Retweet.deleteMany({tweet: tweetId})
 
-    // deleting all likes of the deleted tweet
-    await Like.deleteMany({tweet: tweetId})
+    //  deleting all retweets, likes, bookmarks, comments
+    // Todo: bookmarks, comments
+    await Promise.all([
+      Retweet.deleteMany({tweet: tweetId}),
+      Like.deleteMany({tweet: tweetId}),
+    ])
 
     res.status(200).json({
       msg: 'Tweet deleted successfully'
@@ -157,6 +160,14 @@ const likeTweet = async (req, res) => {
   const {tweetId} = req.body
 
   try {
+    const isTweetExists = await Tweet.exists({_id: tweetId})
+
+    // checking if the tweetId is valid tweet
+    if(!isTweetExists) {
+      return res.status(400).json({
+        error: `tweet with tweet id: ${tweetId} doesn't exists`
+      })
+    }
     const isLikeExists = await Like.exists({tweet: tweetId, user: req.user._id})
 
     //  checking if the user already liked the tweet
