@@ -11,5 +11,7 @@ router.post('/retweet', TweetController.reTweet)
 router.delete('/delete-retweet/:tweetId', TweetController.deleteRetweet)
 router.post('/like-tweet', TweetController.likeTweet)
 router.delete('/remove-like/:tweetId', TweetController.removeLike)
+router.post('/create-bookmark', TweetController.bookmarkTweet)
+router.delete('/delete-bookmark/:tweetId', TweetController.removeBookmark)
 
 module.exports = router

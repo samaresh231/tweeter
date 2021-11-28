@@ -2,6 +2,7 @@ const Tweet = require('../models/tweet')
 const Retweet = require('../models/retweet')
 const Like = require('../models/like')
 const cloudinary = require('../config/cloudinary_config')
+const Bookmark = require('../models/bookmark')
 
 
 const createTweet = async (req, res) => {
@@ -67,10 +68,11 @@ const deleteTweet = async (req, res) => {
 
 
     //  deleting all retweets, likes, bookmarks, comments
-    // Todo: bookmarks, comments
+    // Todo: comments
     await Promise.all([
       Retweet.deleteMany({tweet: tweetId}),
       Like.deleteMany({tweet: tweetId}),
+      Bookmark.deleteMany({tweet: tweetId})
     ])
 
     res.status(200).json({
@@ -225,11 +227,76 @@ const removeLike = async (req, res) => {
 }
 
 const bookmarkTweet = async (req, res) => {
-  //  Todo
+  const {tweetId} = req.body
+
+  try {
+    const isTweetExists = await Tweet.exists({_id: tweetId})
+
+    if(!isTweetExists) {
+      return res.status(400).json({
+        error: `tweet with tweet id ${tweetId} doesn't exists`
+      })
+    }
+
+    const ifAlreadyBookmarked = await Bookmark.exists({
+      tweet: tweetId, 
+      user: req.user._id
+    })
+
+    if(ifAlreadyBookmarked) {
+      return res.status(400).json({
+        error: `user already bookmarked this tweet`
+      })
+    }
+
+    const response = await Bookmark.create({
+      tweet: tweetId, 
+      user: req.user._id
+    })
+
+    await Tweet.findByIdAndUpdate(tweetId, {
+      $inc: {saved: 1}
+    })
+
+    res.status(201).json(response)
+
+  } catch(err) {
+    console.log(err)
+    res.json({
+      error: err.message
+    })
+  }
 }
 
 const removeBookmark = async (req, res) => {
-  //  Todo
+  const {tweetId} = req.params
+
+  try {
+    const response = await Bookmark.deleteOne({
+      tweet: tweetId, 
+      user: req.user._id
+    })
+
+    if(response.deletedCount === 0) {
+      return res.json({
+        error: 'Access Denied'
+      })
+    }
+
+    await Tweet.findByIdAndUpdate(tweetId, {
+      $inc: {saved: -1}
+    })
+
+    res.status(200).json({
+      msg: 'bookmark successfully deleted'
+    })
+
+  } catch(err) {
+    console.log(err)
+    res.status(400).json({
+      error: err.message
+    })
+  }
 }
 
 module.exports = {
