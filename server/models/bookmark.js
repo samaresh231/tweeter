@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const savedSchema = new mongoose.Schema({
+const bookmarkSchema = new mongoose.Schema({
   user: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
@@ -15,4 +15,4 @@ const savedSchema = new mongoose.Schema({
   timestamps: true
 })
 
-module.exports = mongoose.model('Saved', savedSchema)
+module.exports = mongoose.model('Bookmark', bookmarkSchema)
